@@ -2,67 +2,77 @@ package primitives;
 
 import org.junit.jupiter.api.Test;
 
-import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for primitives.Point class
+ *  @author Ester Drey Avigail Bash
  */
-public class PointTest {
-    Point  p1         = new Point(1, 2, 3);
-    Point  p2         = new Point(2, 4, 6);
-    Point  p3         = new Point(2, 4, 5);
-    Vector v1         = new Vector(1, 2, 3);
-    Vector v1Opposite = new Vector(-1, -2, -3);
+class PointTest {
 
     /**
-     * Test of add method, of class Point.
+     * Delta value for accuracy when comparing the numbers of type 'double' in assertEquals
      */
+    private final double DELTA = 0.000001;
+
     @Test
-    public void testAdd() {
-        //============== Equivalence Partitions Tests ==============
-        //TC01: test that check that this func can add point and vector and return new point correctly
-        assertEquals(p1.add(v1), p2, "ERROR: (point + vector) = other point does not work correctly");
+    void testSubtract()
+    {
+        // ============ Equivalence Partitions Tests ==============
+        // TC01:Checking a subtraction operation between two points
+        Point p1=new Point(2,3,4);
+        Point p2=new Point(1,2,3);
+        assertEquals(new Vector(1,1,1),p1.subtract(p2),"ERROR: subtract() wrong value");
+
         // =============== Boundary Values Tests ==================
-        //TC11: test that check that point + his opposite vector equals zero
-        assertEquals(p1.add(v1Opposite), Point.ZERO, "ERROR: (point + vector) = center of coordinates does not work correctly");
-}
-
-    /**
-     * subtract function test case
-     */
-@Test
-    public void subtract() {
-        //============== Equivalence Partitions Tests ==============
-        //TC01: test that check that this func can subtract point and vector and return new point correctly
-        assertEquals(p2.subtract(p1), v1, "ERROR: (point2 - point1) does not work correctly");
-    // =============== Boundary Values Tests ==================
-    //TC: test that check that this func can subtract point and vector and return new point correctly
-        assertThrows(IllegalArgumentException.class, () ->  p1.subtract(p1), "ERROR: (point - itself) throws wrong exception");    }
-
-    /**
-     * Calculates the distance between points and asserts the squared distance is correct.
-     */
-    @Test
-    void distance() {
-        //============== Equivalence Partitions Tests ==============
-        //TC01: check that this func can calculate the distance between two points and return the correct value
-        assertEquals(p1.distance(p3),3 ,"ERROR: squared distance between points is wrong");
-        //TC02: check that this func can calculate the distance between point to himself
-        assertEquals(p1.distance(p1),0 ,"ERROR: point squared distance to itself is not zero");
+        // TC10:Subtracting a point from itself
+        assertThrows(IllegalArgumentException.class,()->p1.subtract(p1),"ERROR: subtract() wrong value");
     }
 
-
-    /**
-     * Calculate the squared distance between two points and return the correct value.
-     */
     @Test
-    void distanceSquared() {
-        //============== Equivalence Partitions Tests ==============
-        //TC01: check that this func can calculate the distance between two points and return the correct value
-        assertEquals(p1.distanceSquared(p3),9 ,"ERROR: squared distance between points is wrong");
-        //TC02: check that this func can calculate the distance between point to himself
-        assertEquals(p1.distanceSquared(p1),0 ,"ERROR: point squared distance to itself is not zero");
+    void testAdd()
+    {
+        // ============ Equivalence Partitions Tests ==============
+        // TC01:Checking the function add
+        Point p1=new Point(2,3,4);
+        Vector v1=new Vector(1,1,1);
+        assertEquals(new Point(3,4,5),p1.add(v1),"ERROR: add() wrong value");
+
+
+        // =============== Boundary Values Tests ==================
+        // TC10:Testing when we get the zero vector
+        Vector v2=new Vector(-2,-3,-4);
+        assertEquals(new Point(0,0,0),p1.add(v2),"ERROR: add() wrong value");
+
+    }
+
+    @Test
+    void testDistanceSquared()
+    {
+        // ============ Equivalence Partitions Tests ==============
+        // TC01:Checking the function DistanceSquared
+        Point p1=new Point(3,3,5);
+        Point p2=new Point(1,2,3);
+        assertEquals(9,p1.distanceSquared(p2),DELTA,"ERROR: DistanceSquared() wrong value");
+
+
+        // =============== Boundary Values Tests ==================
+        // TC10:Distance between a point and itself
+        assertEquals(0,p1.distanceSquared(p1),DELTA,"ERROR: DistanceSquared() wrong value");
+    }
+
+    @Test
+    void testDistance()
+    {
+        // ============ Equivalence Partitions Tests ==============
+        // TC01:Checking the function Distance
+        Point p1 = new Point(3, 4, 5);
+        Point p2 = new Point(0, 0, 5);
+        assertEquals(5, p1.distance(p2), DELTA, "ERROR: Distance() wrong value");
+
+
+        // =============== Boundary Values Tests ==================
+        // TC10:Distance between a point and itself
+        assertEquals(0, p1.distance(p1), DELTA, "ERROR: Distance() wrong value");
     }
 }

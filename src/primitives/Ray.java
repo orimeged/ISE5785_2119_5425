@@ -1,67 +1,54 @@
 package primitives;
 
-
-import static primitives.Util.isZero;
-
 /**
- * class Ray
+ * Class Ray is the basic class representing a ray of Euclidean geometry in Cartesian
+ * 3-Dimensional coordinate system.
+ *
+ * @author Ester Drey and Avigail Bash
  */
-public class Ray {
-    private final Point head;
-    private final Vector dir;
+public class Ray
+{
     /**
-     * Constructor for Ray based on a starting point and a direction vector.
-     * The direction vector is normalized during initialization.
-     *
-     * @param head2 the starting point of the ray
-     * @param dir2  the direction vector of the ray (will be normalized)
+     * starting point of the ray
      */
-    public Ray(Point head2, Vector dir2) {
-        this.head = head2;
-        this.dir = dir2.normalize();
+    private final Point point;
+    /**
+     * direction vector of the ray
+     */
+    private final Vector dir;
+
+    /**
+     *  Constructor to initialize Ray based on point and a vector
+     * @param p1  starting point of the ray
+     * @param v1  direction vector of the ray
+     */
+    public Ray(Point p1, Vector v1)
+    {
+        point = p1;
+       dir = v1.normalize();
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         return (obj instanceof Ray other)
-                && this.head.equals(other.head)
+                && this.point.equals(other.point)
                 && this.dir.equals(other.dir);
     }
-    @Override
-    public String toString() {
-        return "Ray{" +
-                "p0=" + head +
-                ", dir=" +  dir +
-                '}';    }
 
-
-    /**
-     * Gets the head point.
-     *
-     * @return the head point
-     */
-    public Point getHead() {
-        return head;
+    public Point getPoint() {
+        return point;
     }
 
-    /**
-     * Retrieves the dir.
-     *
-     * @return         	the dir
-     */
     public Vector getDir() {
         return dir;
     }
-    /**
-     * Retrieve a point along a path at a given parameter value.
-     *
-     * @param  t   the parameter value specifying the position along the path
-     * @return     the point at the specified parameter value
-     */
-    public Point getPoint(double t) {
-        if (isZero(t))
-            return head;
-        return head.add(dir.scale(t));
-    }
 
+    public Point getPoint(double t) {
+        try {
+            return point.add(dir.scale(t));
+        } catch (Exception e) {
+            return point;
+        }
+    }
 }

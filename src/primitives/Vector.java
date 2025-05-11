@@ -1,119 +1,117 @@
 package primitives;
 
 /**
- * class Vector
+ * Class Vector is the basic class representing a vector of Euclidean geometry in Cartesian
+ * 3-Dimensional coordinate system.
+ *
+ * @author Ester Drey and Avigail bash
  */
 public class Vector extends Point {
-
     /**
-     * secondary  constructor for Vector class
+     * Constructor to initialize Vector based on 3 number values
      *
-     * @param D3 {@link Double3 } head values of vector
-     */
-    public Vector(Double3 D3) {
-        super(D3);
-        if (D3.equals(Double3.ZERO)) {
-                throw new IllegalArgumentException(" Vector(0,0,0) is not allowed");
-            }
-
-        }
-    /**
-     * primary Constructor for Vector
-     *
-     * @param x coordinate value for X axis
-     * @param y coordinate value for Y axis
-     * @param z coordinate value for Z axis
+     * @param x number value for x coordinate
+     * @param y number value for y coordinate
+     * @param z number value for z coordinate
      */
     public Vector(double x, double y, double z) {
-        super(new Double3(x, y, z));
-        if (new Double3(x, y, z).equals(Double3.ZERO)) {
-                throw new IllegalArgumentException(" Vector(0,0,0) is not allowed");
-            }
-        }
+        super(x, y, z);
+        if (xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Zero vector is illegal");
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        return (obj instanceof Vector other)
-                && this.xyz.equals(other.xyz);
     }
-    @Override
-    public String toString() {
-        return "Vector{" +
-                "xyz=" + this.xyz +
-                '}';    }
+
     /**
-     * Calculate the squared length of the xyz vector.
+     * Constructor to initialize Vector based on 3 double numbers (Double3) value
      *
-     * @return the squared length of the xyz vector
+     * @param xyz number value for all 3 numbers
+     */
+    public Vector(Double3 xyz) {
+        super(xyz);
+        if (xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Zero vector is illegal");
+    }
+
+    /**
+     * cales a vector into a new vector where each coordinate is multiplied by the scale factor
+     *
+     * @param d1
+     * @return
+     */
+    public Vector scale(double d1) {
+        return new Vector(this.xyz.scale(d1));
+    }
+
+    /**
+     * Sums two vectors into a new vector where each coordinate is summarized
+     *
+     * @param v1 right handle side operand for addition
+     * @return vector result of addition
+     */
+    public Vector add(Vector v1) {
+        return new Vector(this.xyz.add(v1.xyz));
+    }
+
+    /**
+     * calculates the dot product of two vectors
+     *
+     * @param v1 right handle side operand for dot product calculation
+     * @return result of dot product
+     */
+    public double dotProduct(Vector v1) {
+        return this.xyz.d1 * v1.xyz.d1 + this.xyz.d2 * v1.xyz.d2 + this.xyz.d3 * v1.xyz.d3;
+    }
+
+    /**
+     * calculates the cross product of two vectors
+     *
+     * @param v1 vector right handle side operand for cross product calculation
+     * @return result of cross product
+     */
+    public Vector crossProduct(Vector v1) {
+        return new Vector(
+                (this.xyz.d2 * v1.xyz.d3) - (this.xyz.d3 * v1.xyz.d2),
+                (this.xyz.d3 * v1.xyz.d1) - (this.xyz.d1 * v1.xyz.d3),
+                (this.xyz.d1 * v1.xyz.d2) - (this.xyz.d2 * v1.xyz.d1)
+        );
+    }
+
+    /**
+     * calculates length of the vector squared
+     *
+     * @return length of vector squared
      */
     public double lengthSquared() {
-        return this.xyz.d1() * this.xyz.d1() + this.xyz.d2() * this.xyz.d2() + this.xyz.d3() * this.xyz.d3();
+        return dotProduct(this);
     }
+
     /**
-     * Calculate the length of something.
+     * length of the vector
      *
-     * @return         the length of something
+     * @return length of the vector
      */
     public double length() {
         return Math.sqrt(lengthSquared());
     }
+
+    /**
+     * normalizes the vector
+     *
+     * @return a new normalized vector
+     */
+    public Vector normalize() {
+        double length = this.length();
+        return new Vector(this.xyz.d1 / length, this.xyz.d2 / length, this.xyz.d3 / length);
+    }
+
     @Override
-    public Vector add(Vector vector2) {
-        return new Vector(xyz.add(vector2.xyz));
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        return (obj instanceof Point other)
+                && this.xyz.equals(other.xyz);
     }
-    /**
-     * Scales the vector by the given scalar.
-     *
-     * @param  scalar   the value by which the vector is to be scaled
-     * @return          a new Vector object representing the scaled vector
-     */
-    public Vector scale(double scalar) {
-        return new Vector(xyz.scale(scalar));
-    }
-    /**
-     * Calculates the dot product of this vector with another vector.
-     *
-     * @param  vector2   the other vector to calculate the dot product with
-     * @return          the result of the dot product calculation
-     */
-    public double dotProduct(Vector vector2) {
-        return this.xyz.d1() * vector2.xyz.d1() + this.xyz.d2()* vector2.xyz.d2() + this.xyz.d3() * vector2.xyz.d3();
-    }
-    /**
-     * Calculate the cross product of this vector and the input vector.
-     *
-     * @param  vector2   the input vector for the cross product
-     * @return           a new Vector representing the cross product
-     */
-    public Vector crossProduct(Vector vector2) {
-        double x1 = this.xyz.d1();
-        double y1 = this.xyz.d2();
-        double z1 = this.xyz.d3();
-        double x2 = vector2.xyz.d1();
-        double y2 = vector2.xyz.d2();
-        double z2 = vector2.xyz.d3();
-
-        double vectorX = y1 * z2 - z1 * y2;
-        double vectorY = z1 * x2 - x1 * z2;
-        double vectorZ = x1 * y2 - y1 * x2;
-
-        return new Vector(vectorX, vectorY, vectorZ);
-    }
-
-    /**
-     * Normalize the vector.
-     *
-     * @return         	the normalized vector
-     */
-
-    public Vector normalize(){
-        return new Vector(xyz.reduce(length()));
-    }
-
-
-
-
-
 
 }
