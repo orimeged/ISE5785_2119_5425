@@ -1,15 +1,20 @@
 package geometries;
 
-
-import primitives.*;
+import primitives.Point;
+import primitives.Vector;
 
 /**
- * class Geometries is a class representing a set of geometric shapes
- * in Cartesian 3-Dimensional coordinate system.
+ * The Geometry class is the base
  *
  * @author Ori meged and Natanel hasid
  */
-public interface Geometry  extends Intersectable
-{
-    public Vector getNormal(Point point);
+public abstract class Geometry implements Intersectable {
+    /**
+     * getNormal function returns the normal vector to the geometry object
+     *
+     * @param point - the point on the geometry object
+     * @return the normal vector to the geometry object
+     */
+    public abstract Vector getNormal(Point point);
+
 }
