@@ -1,6 +1,8 @@
 package primitives;
 
 
+import static primitives.Util.isZero;
+
 /**
  * class Ray
  */
@@ -31,5 +33,35 @@ public class Ray {
                 "p0=" + head +
                 ", dir=" +  dir +
                 '}';    }
+
+
+    /**
+     * Gets the head point.
+     *
+     * @return the head point
+     */
+    public Point getHead() {
+        return head;
+    }
+
+    /**
+     * Retrieves the dir.
+     *
+     * @return         	the dir
+     */
+    public Vector getDir() {
+        return dir;
+    }
+    /**
+     * Retrieve a point along a path at a given parameter value.
+     *
+     * @param  t   the parameter value specifying the position along the path
+     * @return     the point at the specified parameter value
+     */
+    public Point getPoint(double t) {
+        if (isZero(t))
+            return head;
+        return head.add(dir.scale(t));
+    }
 
 }

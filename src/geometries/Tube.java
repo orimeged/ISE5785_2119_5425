@@ -3,6 +3,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import static primitives.Util.isZero;
+
 /**
  * class Tube
  */
@@ -23,8 +25,15 @@ public class Tube extends RadialGeometry {
 
     @Override
     public Vector getNormal(Point point) {
-        return null;
+        Point p0= axis.getHead();
+        Vector v = axis.getDir();
+        Vector P0_p= point.subtract(p0);
+        double t= axis.getDir().dotProduct(P0_p);
+        if (isZero(t)) {
+            return P0_p.normalize();
+        }
+        Point O = axis.getPoint(t);
+        return point.subtract(O).normalize();
     }
-
 }
 

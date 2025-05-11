@@ -31,8 +31,11 @@ public class Plane extends Geometry {
         if (p1.equals(p2) || p2.equals(p3) || p3.equals(p1))
             throw new IllegalArgumentException("Plane cannot be defined with identical points");
         this.q = p1;
-        this.normal = null; // Normal calculation to be implemented in the next stage
-    }
+        Vector U = p1.subtract(p2);
+        Vector V = p1.subtract(p3);
+        Vector N = U.crossProduct(V);
+        this.normal = N.normalize();//Normal calculation to be implemented in the next stage
+        }
 
     @Override
     public Vector getNormal(Point point) {

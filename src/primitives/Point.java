@@ -1,8 +1,11 @@
 package primitives;
 
 /**
- * class Point
+ * Class Point is the basic class representing a point of Euclidean geometry in Cartesian
+ * 3-Dimensional coordinate system.
+ * @author Ori Meged and Netanel Hasid
  */
+
 public class Point {
     /**
      * point at (0,0,0)   to check the zero point
