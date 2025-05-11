@@ -13,7 +13,8 @@ import static primitives.Util.isZero;
  *
  * @author Ori meged and Natanel hasid
  */
-public class Plane extends Geometry {
+public class Plane implements Geometry
+{
     /**
      * normal vector to the plane
      */

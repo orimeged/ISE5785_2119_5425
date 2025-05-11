@@ -7,6 +7,9 @@ package primitives;
  * @author Ori meged and Natanel hasid
  */
 public class Vector extends Point {
+    public static final Vector AXIS_Y = new Vector(0,1,0);
+
+
     /**
      * Constructor to initialize Vector based on 3 number values
      *
