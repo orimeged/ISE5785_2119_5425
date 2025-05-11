@@ -1,40 +1,61 @@
 package geometries;
 
 import primitives.Point;
-import primitives.Vector;
-
 import primitives.Ray;
+import primitives.*;
 
 import static primitives.Util.isZero;
 
 /**
- *  class Cylinder
+ * class Cylinder is a class representing a cylinder
+ * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
+ *
+ * @author Ori meged and Natanel hasid
  */
-public class Cylinder extends Tube {
 
-    private final double height;
+public class Cylinder extends Tube
+{
+
     /**
-     * constructor for Cylinder
+     * height of the tube
      */
-    public Cylinder(double radius, Ray axisRay, double height) {
-        super(axisRay, radius);
+    private final double height;
+
+    /**
+     * Constructor to initialize Cylinder based on given axis ray, radius, and height
+     * @param radius
+     * @param axis
+     * @param height
+     */
+    public Cylinder(double radius, Ray axis,double height)
+    {
+        super(radius, axis);
         this.height = height;
-
     }
+
+    /**
+     *
+     * @param p
+     * @return
+     */
     @Override
-    public Vector getNormal(Point point) {
-
-        //The point is on the base whom the cylinder's ray's point is on
-        if (point.equals(axis.getHead()) // p == p0
-                || isZero(point.subtract(axis.getHead()).dotProduct(axis.getDir())))
-            return axis.getDir().scale(-1);
-        //The point is on the base whom nat the cylinder's ray's point is on
-        if (point.equals( axis.getHead().add(axis.getDir().scale(height))) // p == (p0 + height * v)
-                || isZero(point.subtract(axis.getHead().add(axis.getDir().scale(height))).dotProduct(axis.getDir())))
-            return axis.getDir();
-
-
-        return super.getNormal(point);
+    public Vector getNormal(Point p)
+    {
+        // Check that surface point is different from head of axisRay to avoid creating
+        // a zero vector
+        Vector dir = axis.getDir();
+        Point p0 = axis.getPoint();
+        if (p.equals(p0))
+            return dir.scale(-1);
+        // Finding the nearest point to the given point that is on the axis ray
+        double t = dir.dotProduct(p.subtract(p0));
+        // Finds out if surface point is on a base and returns a normal appropriately
+        if (isZero(t))
+            return dir.scale(-1);
+        if (isZero(t - height))
+            return dir;
+        // If surface point is on the side of the cylinder, the superclass (Tube) is
+        // used to find the normal
+        return super.getNormal(p);
     }
-
 }

@@ -1,39 +1,57 @@
 package geometries;
+
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
-import static primitives.Util.isZero;
+import java.util.List;
 
 /**
- * class Tube
+ * class Tube is a class representing a tube
+ * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
+ *
+ * @author Ori meged and Natanel hasid
  */
-public class Tube extends RadialGeometry {
+public class Tube extends RadialGeometry
+{
 
     /**
-     *   @param axis that contains the ray
+     * axis ray of the tube
      */
-    protected  final Ray axis;
+    protected final Ray axis;
+
     /**
-     *   @param axisRay ray
-     *   @param radius radius
+     * Constructor to initialize Tube based on an axis ray and the radius of the tube
+     *      *
+     * @param radius radius of the tube
+     * @param axis axis ray of the tube
      */
-    public Tube(Ray axisRay, double radius) {
+    public Tube(double radius,Ray axis)
+    {
         super(radius);
-        this.axis = axisRay;
+        this.axis = axis;
+    }
+
+
+    @Override
+    public Vector getNormal(Point point)
+    {
+        Vector v = axis.getDir();//get the direction vector
+        Point p0 = axis.getPoint();//get the head point of the cylinder's ray
+        double d = v.dotProduct(point.subtract(p0));//calculate the projection of the point on tube's ray
+        if(d == 0)
+        {
+            Vector normal = point.subtract(p0);
+            return normal.normalize();
+        }
+        //the point is on the body of the tube
+        Point O = p0.add(v.scale(d));//calculate the "new" center of the tube that is in front of the given point
+        Vector normal = point.subtract(O);//calculate the normal
+        return normal.normalize();
     }
 
     @Override
-    public Vector getNormal(Point point) {
-        Point p0= axis.getHead();
-        Vector v = axis.getDir();
-        Vector P0_p= point.subtract(p0);
-        double t= axis.getDir().dotProduct(P0_p);
-        if (isZero(t)) {
-            return P0_p.normalize();
-        }
-        Point O = axis.getPoint(t);
-        return point.subtract(O).normalize();
+    public List<Point> findIntersections(Ray ray) {
+        return List.of();
     }
 }
-

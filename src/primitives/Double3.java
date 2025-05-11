@@ -7,24 +7,43 @@ import static primitives.Util.isZero;
 
 /**
  * This class will serve all primitive classes based on three numbers
- * @param  d1 first number
- * @param  d2 first number
- * @param  d3 first number
- * @author    Dan Zilberstein
+ * @author Dan Zilberstein
  */
-public record Double3(double d1, double d2, double d3) {
+public class Double3 {
+   /** First number */
+   final double                d1;
+   /** Second number */
+   final double                d2;
+   /** Third number */
+   final double                d3;
 
    /** Zero triad (0,0,0) */
    public static final Double3 ZERO = new Double3(0, 0, 0);
 
    /** One's triad (1,1,1) */
-   public static final Double3 ONE = new Double3(1, 1, 1);
+   public static final Double3 ONE  = new Double3(1, 1, 1);
+
+   /**
+    * Constructor to initialize Double3 based object with its three number values
+    * @param d1 first number value
+    * @param d2 second number value
+    * @param d3 third number value
+    */
+   public Double3(double d1, double d2, double d3) {
+      this.d1 = d1;
+      this.d2 = d2;
+      this.d3 = d3;
+   }
 
    /**
     * Constructor to initialize Double3 based object the same number values
     * @param value number value for all 3 numbers
     */
-   public Double3(double value) { this(value, value, value); }
+   public Double3(double value) {
+      this.d1 = value;
+      this.d2 = value;
+      this.d3 = value;
+   }
 
    @Override
    public boolean equals(Object obj) {

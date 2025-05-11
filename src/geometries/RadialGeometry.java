@@ -1,18 +1,26 @@
 package geometries;
 
 /**
- * abstract class RadialGeometry
+ * class radialGeometry is a class representing a geometry
+ * with a radius of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
+ *
+ * @author Ori meged and Natanel hasid
  */
-public abstract class RadialGeometry extends Geometry {
+public abstract class RadialGeometry implements Geometry
+{
+    /**
+     * the geometry radius
+     */
+    protected double radius;
 
     /**
-     * double that contains the radius
+     * Constructor to initialize radialGeometry based on a radius
+     * @param radius
      */
-    protected final double radius;
-    /**
-     * constructor for RadialGeometry
-     */
-    RadialGeometry(double r){
-        this.radius=r;
+    public RadialGeometry(double radius)
+    {
+        this.radius = radius;
     }
+
+
 }

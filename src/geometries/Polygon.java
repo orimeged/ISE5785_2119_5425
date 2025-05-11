@@ -1,16 +1,19 @@
 package geometries;
 
-import static java.lang.Double.*;
 import java.util.List;
-import static primitives.Util.*;
-import primitives.*;
+
+import static primitives.Util.isZero;
+
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
 
 /**
  * Polygon class represents two-dimensional polygon in 3D Cartesian coordinate
  * system
- * @author Dan
+ * @author Ori meged and Natanel hasid
  */
-public class Polygon extends Geometry {
+public class Polygon implements Geometry {
    /** List of polygon's vertices */
    protected final List<Point> vertices;
    /** Associated plane in which the polygon lays */
@@ -51,21 +54,21 @@ public class Polygon extends Geometry {
       plane         = new Plane(vertices[0], vertices[1], vertices[2]);
       if (size == 3) return; // no need for more tests for a Triangle
 
-      Vector  n        = plane.getNormal(vertices[0]);
+      Vector  n        = plane.getNormal();
       // Subtracting any subsequent points will throw an IllegalArgumentException
       // because of Zero Vector if they are in the same point
-      Vector  edge1    = vertices[size - 1].subtract(vertices[size - 2]);
-      Vector  edge2    = vertices[0].subtract(vertices[size - 1]);
+      Vector  edge1    = vertices[vertices.length - 1].subtract(vertices[vertices.length - 2]);
+      Vector  edge2    = vertices[0].subtract(vertices[vertices.length - 1]);
 
       // Cross Product of any subsequent edges will throw an IllegalArgumentException
       // because of Zero Vector if they connect three vertices that lay in the same
       // line.
       // Generate the direction of the polygon according to the angle between last and
-      // first edge being less than 180deg. It is hold by the sign of its dot product
+      // first edge being less than 180 deg. It is hold by the sign of its dot product
       // with the normal. If all the rest consequent edges will generate the same sign
       // - the polygon is convex ("kamur" in Hebrew).
       boolean positive = edge1.crossProduct(edge2).dotProduct(n) > 0;
-      for (var i = 1; i < size; ++i) {
+      for (var i = 1; i < vertices.length; ++i) {
          // Test that the point is in the same plane as calculated originally
          if (!isZero(vertices[i].subtract(vertices[0]).dotProduct(n)))
             throw new IllegalArgumentException("All vertices of a polygon must lay in the same plane");
@@ -78,6 +81,10 @@ public class Polygon extends Geometry {
    }
 
    @Override
-   public Vector getNormal(Point point) { return plane.getNormal(point); }
+   public Vector getNormal(Point point) { return plane.getNormal(); }
 
+   @Override
+   public List<Point> findIntersections(Ray ray) {
+      return null;
+   }
 }
