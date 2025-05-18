@@ -19,9 +19,10 @@ public class RenderTests {
 
     /** Camera builder of the tests */
     private final Camera.Builder camera = Camera.getBuilder() //
-            .setLocation(Point.ZERO).setDirection((Vector) new Point(0, 0, -1), Vector.AXIS_Y) //
-            .setVpDistance(100) //
-            .setVpSize(500, 500);
+            .setLocation(Point.ZERO) // מיקום המצלמה
+            .setDirection(new Vector(0, 0, -1), Vector.AXIS_Y) // כיוון המצלמה
+            .setVpDistance(100) // מרחק למישור התצוגה
+            .setVpSize(500, 500); // גודל מישור התצוגה
 
     /**
      * Produce a scene with basic 3D model and render it into a png image with a
@@ -103,11 +104,11 @@ public class RenderTests {
     @Test
     public void basicRenderJson() {
         Scene scene = new Scene("Using Json");
-        // enter XML file name and parse from JSON file into scene object instead of the
+        // enter JSON file name and parse from JSON file into scene object instead of the
         // new Scene above,
         // Use the code you added in appropriate packages
         // ...
-        // NB: unit tests is not the correct place to put XML parsing code
+        // NB: unit tests is not the correct place to put JSON parsing code
 
         camera //
                 .setRayTracer(scene, RayTracerType.SIMPLE) //
@@ -115,6 +116,6 @@ public class RenderTests {
                 .build() //
                 .renderImage() //
                 .printGrid(100, new Color(YELLOW)) //
-                .writeToImage("xml render test");
+                .writeToImage("json render test");
     }
 }
