@@ -10,7 +10,7 @@ import static primitives.Util.isZero;
  * class Cylinder is a class representing a cylinder
  * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ester Drey and Avigail Bash
+ * @author Ori meged and Natanel hasid
  */
 
 public class Cylinder extends Tube
