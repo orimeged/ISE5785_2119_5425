@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Testing Polygons
- * @author Ester Drey and Avigail Bash
+ * @author Ori meged and Natanel hasid
  */
 public class PolygonTests {
    /**

@@ -9,7 +9,7 @@ import static primitives.Util.alignZero;
  * class Triangle is a basic class representing a triangle
  * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ester Drey and Avigail Bash
+ * @author Ori meged and Natanel hasid
  */
 public class Triangle  extends Polygon
 {

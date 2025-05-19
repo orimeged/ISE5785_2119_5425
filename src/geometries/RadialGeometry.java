@@ -4,7 +4,7 @@ package geometries;
  * class radialGeometry is a class representing a geometry
  * with a radius of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ester Drey and Avigail Bash
+ * @author Ori meged and Natanel hasid
  */
 public abstract class RadialGeometry extends Geometry {
     /**

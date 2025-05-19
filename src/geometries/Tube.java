@@ -10,7 +10,7 @@ import java.util.List;
  * class Tube is a class representing a tube
  * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ester Drey and Avigail Bash
+ * @author Ori meged and Natanel hasid
  */
 public class Tube extends RadialGeometry
 {

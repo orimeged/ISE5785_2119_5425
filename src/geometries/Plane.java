@@ -11,7 +11,7 @@ import static primitives.Util.isZero;
  * class Plane is a class representing a plane
  * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ester Drey and Avigail Bash
+ * @author Ori meged and Natanel hasid
  */
 public class Plane extends Geometry
 {

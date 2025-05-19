@@ -4,9 +4,12 @@ package primitives;
  * Class Vector is the basic class representing a vector of Euclidean geometry in Cartesian
  * 3-Dimensional coordinate system.
  *
- * @author Ester Drey and Avigail bash
+ * @author Ori meged and Natanel hasid
  */
 public class Vector extends Point {
+    public static final Vector AXIS_Y = new Vector(0,1,0);
+
+
     /**
      * Constructor to initialize Vector based on 3 number values
      *
@@ -100,8 +103,7 @@ public class Vector extends Point {
      * @return a new normalized vector
      */
     public Vector normalize() {
-        double length = this.length();
-        return new Vector(this.xyz.d1 / length, this.xyz.d2 / length, this.xyz.d3 / length);
+        return new Vector(this.xyz.reduce(this.length()));
     }
 
     @Override

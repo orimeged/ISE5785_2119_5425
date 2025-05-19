@@ -7,6 +7,13 @@ import java.util.MissingResourceException;
 
 import static primitives.Util.isZero;
 
+/**
+ * The Camera class represents a virtual camera in a 3D scene.
+ * It is responsible for constructing rays through pixels, rendering images,
+ * and managing the camera's position, orientation, and view plane.
+ *
+ * @author Ori meged and Natanel hasid
+ */
 public class Camera implements Cloneable {
     private Point location;
     private Vector vTo;
@@ -35,7 +42,7 @@ public class Camera implements Cloneable {
     }
 
     /**
-     * Constructs a ray through a pixel in the view plane
+     * Constructs a ray through a pixel in the view plane.
      *
      * @param nX Number of pixels in the horizontal dimension
      * @param nY Number of pixels in the vertical dimension
@@ -66,7 +73,6 @@ public class Camera implements Cloneable {
             throw new MissingResourceException("Missing ray tracer", RayTracerBase.class.getName(), "");
         }
 
-        // For each pixel in the view plane, cast a ray and compute its color
         for (int i = 0; i < nY; i++) {
             for (int j = 0; j < nX; j++) {
                 castRay(j, i);
@@ -101,7 +107,6 @@ public class Camera implements Cloneable {
         }
 
         for (int i = 0; i < nY; i++) {
-            // Draw horizontal lines
             if (i % interval == 0) {
                 for (int j = 0; j < nX; j++) {
                     imageWriter.writePixel(j, i, color);
@@ -110,7 +115,6 @@ public class Camera implements Cloneable {
         }
 
         for (int j = 0; j < nX; j++) {
-            // Draw vertical lines
             if (j % interval == 0) {
                 for (int i = 0; i < nY; i++) {
                     imageWriter.writePixel(j, i, color);
@@ -136,22 +140,16 @@ public class Camera implements Cloneable {
         return this;
     }
 
+    /**
+     * Builder class for constructing a Camera object with custom parameters.
+     */
     public static class Builder {
         private final Camera camera;
 
-        /**
-         * Default constructor for Builder
-         */
         public Builder() {
             camera = new Camera();
         }
 
-        /**
-         * Sets the location of the camera
-         *
-         * @param location The point representing camera location
-         * @return The builder object for method chaining
-         */
         public Builder setLocation(Point location) {
             if (location == null) {
                 throw new IllegalArgumentException("Camera location cannot be null");
@@ -160,55 +158,31 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /**
-         * Sets the orientation of the camera using direction vectors
-         *
-         * @param vTo The vector pointing in the direction the camera is facing
-         * @param vUp The vector pointing upward relative to the camera
-         * @return The builder object for method chaining
-         */
         public Builder setDirection(Vector vTo, Vector vUp) {
             if (vTo == null || vUp == null) {
                 throw new IllegalArgumentException("Camera vectors cannot be null");
             }
 
-            // Check if vectors are orthogonal (perpendicular to each other)
             if (vTo.dotProduct(vUp) != 0) {
                 throw new IllegalArgumentException("Camera vectors vTo and vUp must be orthogonal");
             }
 
-            // Normalize vectors
             camera.vTo = vTo.normalize();
             camera.vUp = vUp.normalize();
-
-            // Calculate the right vector using cross product
             camera.vRight = vTo.crossProduct(vUp).normalize();
 
             return this;
         }
 
-        /**
-         * Sets the orientation of the camera using target point and up vector
-         *
-         * @param target The point the camera is looking at
-         * @param vUp    The approximate up vector (doesn't need to be exact)
-         * @return The builder object for method chaining
-         */
         public Builder setDirection(Point target, Vector vUp) {
             if (target == null || vUp == null) {
                 throw new IllegalArgumentException("Target point or up vector cannot be null");
             }
 
-            // Calculate vTo from camera location to target
             Vector vTo = target.subtract(camera.location).normalize();
-
-            // Calculate vRight using cross product of vTo and the approximate vUp
             Vector vRight = vTo.crossProduct(vUp).normalize();
-
-            // Calculate exact vUp using cross product of vRight and vTo
             Vector vUpExact = vRight.crossProduct(vTo).normalize();
 
-            // Set the camera vectors
             camera.vTo = vTo;
             camera.vUp = vUpExact;
             camera.vRight = vRight;
@@ -216,28 +190,14 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /**
-         * Sets the orientation of the camera using only target point (assuming Y-axis as default up)
-         *
-         * @param target The point the camera is looking at
-         * @return The builder object for method chaining
-         */
         public Builder setDirection(Point target) {
             if (target == null) {
                 throw new IllegalArgumentException("Target point cannot be null");
             }
 
-            // Use Y-axis as default "up" vector
             return setDirection(target, new Vector(0, 1, 0));
         }
 
-        /**
-         * Sets the size of the view plane
-         *
-         * @param width  The width of the view plane
-         * @param height The height of the view plane
-         * @return The builder object for method chaining
-         */
         public Builder setVpSize(double width, double height) {
             if (width <= 0 || height <= 0) {
                 throw new IllegalArgumentException("View plane dimensions must be positive");
@@ -249,12 +209,6 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /**
-         * Sets the distance from camera to view plane
-         *
-         * @param distance The distance between camera and view plane
-         * @return The builder object for method chaining
-         */
         public Builder setVpDistance(double distance) {
             if (distance <= 0) {
                 throw new IllegalArgumentException("Distance must be positive");
@@ -265,26 +219,12 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /**
-         * Sets the resolution of the view plane in pixels
-         *
-         * @param nX Number of pixels in X dimension (width)
-         * @param nY Number of pixels in Y dimension (height)
-         * @return The builder object for method chaining
-         */
         public Builder setResolution(int nX, int nY) {
             camera.nX = nX;
             camera.nY = nY;
             return this;
         }
 
-        /**
-         * Sets the ray tracer for the camera.
-         *
-         * @param scene the scene to be rendered
-         * @param type  the type of ray tracer to use
-         * @return this builder object for method chaining
-         */
         public Builder setRayTracer(Scene scene, RayTracerType type) {
             switch (type) {
                 case SIMPLE:
@@ -296,12 +236,6 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /**
-         * Builds the camera with the configured parameters
-         *
-         * @return A fully constructed Camera object
-         * @throws MissingResourceException if any required parameter is missing
-         */
         public Camera build() {
             final String className = "Camera";
             final String description = "missing render data";
@@ -335,14 +269,12 @@ public class Camera implements Cloneable {
             if (camera.vpDistance <= 0)
                 throw new IllegalArgumentException("distance from camera to view must be positive");
 
-            // Validate resolution
             if (camera.nX <= 0 || camera.nY <= 0) {
                 throw new IllegalArgumentException("Image resolution must be positive");
             }
-            // Initialize image writer
+
             camera.imageWriter = new ImageWriter(camera.nX, camera.nY);
 
-            // Initialize ray tracer with empty scene if not already set
             if (camera.rayTracer == null) {
                 camera.rayTracer = new SimpleRayTracer(null);
             }
@@ -354,6 +286,4 @@ public class Camera implements Cloneable {
             }
         }
     }
-
-
 }

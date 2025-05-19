@@ -8,7 +8,7 @@ import java.util.List;
  * class Geometries is a class representing a set of geometric shapes
  * in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ester Drey and Avigail Bash
+ * @author Ori meged and Natanel hasid
  */
 public class Geometry implements Intersectable {
     // Constructor
