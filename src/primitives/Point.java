@@ -6,7 +6,7 @@ import static primitives.Util.isZero;
  * Class Point is the basic class representing a point of Euclidean geometry in Cartesian
  * 3-Dimensional coordinate system.
  *
- * @author Ori meged and Natanel hasid
+ * @author ori meged and nethanel hasid
  */
 public class Point {
     /**

@@ -10,7 +10,7 @@ import java.util.List;
  * class Tube is a class representing a tube
  * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ori meged and Natanel hasid
+ * @author ori meged and nethanel hasid
  */
 public class Tube extends RadialGeometry
 {
@@ -33,10 +33,15 @@ public class Tube extends RadialGeometry
     }
 
 
+    /**
+     * find the normal
+     * @param point
+     * @return the normal
+     */
     @Override
     public Vector getNormal(Point point)
     {
-        Vector v = axis.getDir();//get the direction vector
+        Vector v = axis.getDirection();//get the direction vector
         Point p0 = axis.getPoint();//get the head point of the cylinder's ray
         double d = v.dotProduct(point.subtract(p0));//calculate the projection of the point on tube's ray
         if(d == 0)
@@ -51,7 +56,7 @@ public class Tube extends RadialGeometry
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         return List.of();
     }
 }

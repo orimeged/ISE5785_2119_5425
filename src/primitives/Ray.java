@@ -1,12 +1,13 @@
 package primitives;
 
 import java.util.List;
+import geometries.Intersectable.GeoPoint;
 
 /**
  * Class Ray is the basic class representing a ray of Euclidean geometry in Cartesian
  * 3-Dimensional coordinate system.
  *
- * @author Ori meged and Natanel hasid
+ * @author ori meged and nethanel hasid
  */
 public class Ray {
     /**
@@ -16,7 +17,7 @@ public class Ray {
     /**
      * direction vector of the ray
      */
-    private final Vector dir;
+    private final Vector direction;
 
     /**
      * Constructor to initialize Ray based on point and a vector
@@ -26,34 +27,54 @@ public class Ray {
      */
     public Ray(Point p1, Vector v1) {
         point = p1;
-        dir = v1.normalize();
+        direction = v1.normalize();
         p1 = point;
     }
 
+    /**
+     * Override equals method
+     * @param obj
+     * @return object
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         return (obj instanceof Ray other)
                 && this.point.equals(other.point)
-                && this.dir.equals(other.dir);
+                && this.direction.equals(other.direction);
     }
 
+    /**
+     *  get point of the ray
+     * @return the point
+     */
     public Point getPoint() {
         return point;
     }
 
-    public Vector getDir() {
-        return dir;
+    /**
+     * return the direction
+     * @return vector
+     */
+    public Vector getDirection() {
+        return direction;
     }
 
+    /**
+     * getter
+     * @param t
+     * @return point
+     */
     public Point getPoint(double t) {
-        try {
-            return point.add(dir.scale(t));
-        } catch (Exception e) {
-            return point;
-        }
+        if (t == 0) return point;
+        return point.add(direction.scale(t));
     }
 
+    /**
+     * find the closest point to ray's head
+     * @param list
+     * @return the closet point
+     */
     public Point findClosestPoint(List<Point> list) {
         if (list == null)
             return null;
@@ -66,5 +87,34 @@ public class Ray {
                 closest = p;
             }
         return closest;
+    }
+
+
+    /**
+     * Finds the closest GeoPoint to the start of the ray from a collection of
+     * GeoPoints.
+     *
+     * @param intersections The collection of GeoPoints.
+     * @return The closest GeoPoint to the start of the ray.
+     */
+    public GeoPoint findClosestGeoPoint(List<GeoPoint> intersections) {
+        // Initialize variables to store the closest GeoPoint and its distance
+        GeoPoint closestGeoPoint = null;
+        double closestDistance = Double.POSITIVE_INFINITY;
+
+        // Iterate through the list of GeoPoints
+        for (GeoPoint geoPoint : intersections) {
+            // Calculate the distance between the origin of the ray and the current GeoPoint
+            double distance = point.distance(geoPoint.point);
+
+            // Check if the current GeoPoint is closer than the previous closest GeoPoint
+            if (distance < closestDistance) {
+                closestGeoPoint = geoPoint;
+                closestDistance = distance;
+            }
+        }
+
+        // Return the closest GeoPoint
+        return closestGeoPoint;
     }
 }

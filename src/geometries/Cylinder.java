@@ -10,7 +10,7 @@ import static primitives.Util.isZero;
  * class Cylinder is a class representing a cylinder
  * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ori meged and Natanel hasid
+ * @author ori meged and nethanel hasid
  */
 
 public class Cylinder extends Tube
@@ -43,7 +43,7 @@ public class Cylinder extends Tube
     {
         // Check that surface point is different from head of axisRay to avoid creating
         // a zero vector
-        Vector dir = axis.getDir();
+        Vector dir = axis.getDirection();
         Point p0 = axis.getPoint();
         if (p.equals(p0))
             return dir.scale(-1);

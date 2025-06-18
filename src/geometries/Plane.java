@@ -4,14 +4,13 @@ import primitives.*;
 
 import java.util.List;
 
-import static primitives.Util.alignZero;
-import static primitives.Util.isZero;
+import static primitives.Util.*;
 
 /**
  * class Plane is a class representing a plane
  * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ori meged and Natanel hasid
+ * @author ori meged and nethanel hasid
  */
 public class Plane extends Geometry
 {
@@ -60,17 +59,23 @@ public class Plane extends Geometry
         return vector.normalize();
     }
 
+
+    /**
+     * Returns the normal vector to the surface of the tube at a given point.
+     * @param point
+     * @return The normal vector to the surface at the given point
+     */
     @Override
     public Vector getNormal(Point point) {
         return vector.normalize();
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         double numerator=vector.dotProduct(point.subtract(ray.getPoint()));
-        double denumerator=vector.dotProduct(ray.getDir());
+        double denumerator=vector.dotProduct(ray.getDirection());
 
-        if(denumerator==0)
+        if(isZero(denumerator))
         {
             return null;
         }
@@ -82,8 +87,9 @@ public class Plane extends Geometry
             return null;
         }
 
-       Point p=ray.getPoint(d);
-        return List.of(p);
+        Point p=ray.getPoint(d);
+
+        return List.of(new GeoPoint(this, p));
 
        }
 

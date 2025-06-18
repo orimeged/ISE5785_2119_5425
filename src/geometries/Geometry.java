@@ -1,30 +1,57 @@
 package geometries;
 
-import primitives.*;
 
-import java.util.List;
+import primitives.*;
 
 /**
  * class Geometries is a class representing a set of geometric shapes
  * in Cartesian 3-Dimensional coordinate system.
  *
- * @author Ori meged and Natanel hasid
+ * @author ori meged and nethanel hasid
  */
-public class Geometry implements Intersectable {
-    // Constructor
-    public Geometry() {
-        // ... any initialization if needed ...
+public abstract class Geometry extends Intersectable
+{
+    /**
+     * Field representing the emission color of the geometry.
+     */
+    protected Color emission=Color.BLACK;
+
+    private Material material=new Material();
+
+
+    /**
+     * Field representing the material of the geometry.
+     */
+    public abstract Vector getNormal(Point point);
+
+
+
+    /**
+     * Method that returns the emission color of the geometry.
+     * @return the emission color
+     */
+    public Color getEmission() {
+        return emission;
     }
 
-    public Vector getNormal(Point point) {
-        // This method should be overridden in subclasses
-        throw new UnsupportedOperationException("getNormal not implemented");
+
+    /**
+     * Method to update the emission color of the geometry.
+     *
+     * @param emission the new emission color to set
+     * @return the updated Geometry object
+     */
+    public Geometry setEmission(Color emission) {
+        this.emission = emission;
+        return this;
     }
 
-    @Override
-    public List<Point> findIntersections(Ray ray) {
-        return List.of();
+    public Material getMaterial() {
+        return material;
     }
 
-    // Implement other methods from Intersectable if needed
+    public Geometry setMaterial(Material material) {
+        this.material = material;
+        return this;
+    }
 }
