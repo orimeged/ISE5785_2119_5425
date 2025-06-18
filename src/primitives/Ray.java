@@ -14,6 +14,7 @@ public class Ray {
      * starting point of the ray
      */
     private final Point point;
+    private static final double DELTA = 0.1;
     /**
      * direction vector of the ray
      */
@@ -29,6 +30,19 @@ public class Ray {
         point = p1;
         direction = v1.normalize();
         p1 = point;
+    }
+
+    /**
+     * Constructor to initialize ray
+     *
+     * @param p0  point of the ray
+     * @param n   normal vector
+     * @param dir direction vector of the ray
+     */
+    public Ray(Point p0, Vector dir, Vector n) {
+        double delta = dir.dotProduct(n) >= 0 ? DELTA : -DELTA;
+        this.point = p0.add(n.scale(delta));
+        this.direction = dir;
     }
 
     /**

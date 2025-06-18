@@ -2,6 +2,9 @@ package primitives;
 
 public class Material {
 
+    public Double3 kT = Double3.ZERO; // the factor of transparency (מקדם שקיפות)
+    public Double3 kR = Double3.ZERO; // the factor of reflection (מקדם השתקפות)
+
     public Double3 kD=Double3.ZERO,kS=Double3.ZERO;
     public int nShininess=0;
 
@@ -31,3 +34,4 @@ public class Material {
     }
 
 }
+
