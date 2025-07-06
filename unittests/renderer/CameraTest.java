@@ -1,18 +1,23 @@
 package renderer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
-
-import primitives.*;
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
 import scene.Scene;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+//import scene.Scene;
 
 /**
  * Testing Camera Class
- * @author Dan
+ *
+ *@author Ori meged and Nethanel hasid
  */
 class CameraTest {
-    /** Camera builder for the tests */
+    /**
+     * Camera builder for the tests
+     */
     private final Camera.Builder cameraBuilder = Camera.getBuilder()
             .setRayTracer(new SimpleRayTracer(new Scene("Test")))
             .setImageWriter(new ImageWriter("Test", 1, 1))
@@ -26,7 +31,7 @@ class CameraTest {
      */
     @Test
     void testConstructRay() {
-        final String badRay  = "Bad ray";
+        final String badRay = "Bad ray";
 
         // ============ Equivalence Partitions Tests ==============
         // EP01: 4X4 Inside (1,1)
@@ -61,5 +66,6 @@ class CameraTest {
                 camera2.constructRay(3, 3, 0, 0), badRay);
 
     }
+
 
 }

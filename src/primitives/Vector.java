@@ -4,7 +4,7 @@ package primitives;
  * Class Vector is the basic class representing a vector of Euclidean geometry in Cartesian
  * 3-Dimensional coordinate system.
  *
- * @author ori meged and nethanel hasid
+ * @author Ester Drey and Avigail bash
  */
 public class Vector extends Point {
     /**
@@ -113,5 +113,16 @@ public class Vector extends Point {
         return (obj instanceof Point other)
                 && this.xyz.equals(other.xyz);
     }
+
+
+    /**
+     * Return an orthogonal vector to a given vector
+     *
+     * @return An orthogonal vector to the given Vector
+     */
+    public Vector getOrthogonal() {
+        return xyz.d1 == 0 ? new Vector(1, 0, 0): new Vector(-xyz.d2, xyz.d1, 0);
+    }
+
 
 }

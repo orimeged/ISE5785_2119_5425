@@ -3,26 +3,21 @@ package renderer;
 import org.junit.jupiter.api.Test;
 import primitives.Color;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static java.awt.Color.*;
+
 
 class ImageWriterTest {
 
     @Test
-    void FirstImage() {
-        assertDoesNotThrow(() -> {
-            Color yellow = new Color(java.awt.Color.YELLOW);
-            Color red = new Color(java.awt.Color.RED);
-            ImageWriter imageWriter = new ImageWriter("test", 801, 501);
-            for (int i = 0; i <= 800; i++) {
-                for (int j = 0; j <= 500; j++) {
-                    if (i % 50 == 0 || j % 50 == 0) {
-                        imageWriter.writePixel(i, j, red);
-                    } else {
-                        imageWriter.writePixel(i, j, yellow);
-                    }
-                }
-                imageWriter.writeToImage();
+    void testWriteToImage() {
+        ImageWriter imageWriter = new ImageWriter("yellow", 800, 500);
+        for (int i = 0; i < imageWriter.getNx(); i++) {
+            for (int j = 0; j < imageWriter.getNy(); j++) {
+                Color color = i % 50 == 0 || j % 50 == 0 ? new Color(RED) : new Color(YELLOW);
+                imageWriter.writePixel(i, j, color);
             }
-        }, "Failed to create image");
+        }
+
+        imageWriter.writeToImage();
     }
 }

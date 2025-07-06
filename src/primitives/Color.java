@@ -113,4 +113,16 @@ public class Color {
 
     @Override
     public String toString() { return "rgb:" + rgb; }
+
+    /**
+     * Compares this color to another color, checking if they are almost equal within a small threshold.
+     * @param other The color to compare with.
+     * @return true if the colors are almost equal, false otherwise.
+     */
+    public boolean isAlmostEquals(Color other) {
+        final double EPSILON = 0.0001; // סף להשוואה
+        return Math.abs(this.rgb.d1 - other.rgb.d1) < EPSILON &&
+                Math.abs(this.rgb.d2 - other.rgb.d2) < EPSILON &&
+                Math.abs(this.rgb.d3 - other.rgb.d3) < EPSILON;
+    }
 }

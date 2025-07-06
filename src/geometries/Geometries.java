@@ -1,20 +1,21 @@
 package geometries;
 
-import primitives.Point;
 import primitives.Ray;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The department implements operations for several geometric bodies
  *
- * @author ori meged and nethanel hasid
+ * @author Ori meged and Nethanel hasid
  */
 
 public class Geometries extends Intersectable {
 
 
-   private List<Intersectable> geometries = new LinkedList<>();
+    private List<Intersectable> geometries = new LinkedList<>();
 
     /**
      * a constructor
