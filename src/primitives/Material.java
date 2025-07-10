@@ -20,18 +20,6 @@ public class Material {
     /** Phong shininess exponent controlling specular highlight size. */
     private int shininess = 0;
 
-    /**
-     * Sets the ambient reflection coefficient (scalar).
-     * @param ka ambient coefficient value
-     * @return this Material for chaining
-     */
-    public Material setKA(double ka)    { this.kA = new Double3(ka); return this; }
-    /**
-     * Sets the ambient reflection coefficient (vector).
-     * @param ka ambient coefficient vector
-     * @return this Material for chaining
-     */
-    public Material setKA(Double3 ka)   { this.kA = ka;            return this; }
 
     /**
      * Sets the diffuse reflection coefficient (scalar).
