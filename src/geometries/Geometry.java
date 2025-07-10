@@ -1,68 +1,71 @@
 package geometries;
 
-
 import primitives.Color;
 import primitives.Material;
-import primitives.Point;
 import primitives.Vector;
+import primitives.Point;
 
 /**
- * class Geometries is a class representing a set of geometric shapes
- * in Cartesian 3-Dimensional coordinate system.
- *
- * @author Ester Drey and Avigail Bash
+ * Abstract base class for all geometric shapes in the scene.
+ * <p>
+ * Provides common properties such as emission color and material,
+ * and declares an abstract method to obtain the surface normal at a point.
+ * </p>
  */
 public abstract class Geometry extends Intersectable {
+
     /**
-     * Field representing the emission color of the geometry.
+     * Emission (intrinsic) color of the geometry used for shading.
      */
     protected Color emission = Color.BLACK;
 
+    /**
+     * Material properties of the geometry (diffuse, specular, etc.).
+     */
     private Material material = new Material();
 
-
     /**
-     * Field representing the material of the geometry.
-     */
-    public abstract Vector getNormal(Point point);
-
-
-    /**
-     * Method that returns the emission color of the geometry.
+     * Retrieves the emission color of the geometry.
      *
-     * @return the emission color
+     * @return the current emission color
      */
     public Color getEmission() {
         return emission;
     }
 
-
     /**
-     * Method to update the emission color of the geometry.
+     * Sets the emission color for this geometry.
      *
-     * @param emission the new emission color to set
-     * @return the updated Geometry object
+     * @param emission the emission color to set
+     * @return this geometry (for method chaining)
      */
     public Geometry setEmission(Color emission) {
         this.emission = emission;
         return this;
     }
 
+    /**
+     * Computes the normal vector to the geometry at the specified point.
+     *
+     * @param p the point on the surface where the normal is computed
+     * @return a normalized vector perpendicular to the surface at point p
+     */
+    public abstract Vector getNormal(Point p);
 
     /**
-     * Get the material of this object.
+     * Retrieves the material of the geometry.
      *
-     * @return the material of this object
+     * @return the material properties
      */
     public Material getMaterial() {
         return material;
     }
 
     /**
-     * Sets the material of the geometry.
+     * Sets the material properties for this geometry.
      *
      * @param material the material to set
-     * @return the updated geometry with the new material
+     * @return this geometry (for method chaining)
      */
     public Geometry setMaterial(Material material) {
         this.material = material;

@@ -1,128 +1,111 @@
 package primitives;
 
+import static primitives.Util.isZero;
+
 /**
- * Class Vector is the basic class representing a vector of Euclidean geometry in Cartesian
- * 3-Dimensional coordinate system.
- *
- * @author Ester Drey and Avigail bash
+ * The {@code Vector} class represents a non-zero vector in 3D Cartesian space.
+ * It *extends* Point so that you can use a Vector anywhere a Point is expected.
  */
 public class Vector extends Point {
+    // standard unit axes:
+    public static final Vector AXIS_X = new Vector(1, 0, 0);
+    public static final Vector AXIS_Y = new Vector(0, 1, 0);
+    public static final Vector AXIS_Z = new Vector(0, 0, 1);
+
     /**
-     * Constructor to initialize Vector based on 3 number values
-     *
-     * @param x number value for x coordinate
-     * @param y number value for y coordinate
-     * @param z number value for z coordinate
+     * Constructs a non-zero vector from three coordinates.
+     * @throws IllegalArgumentException if (x,y,z) == (0,0,0)
      */
     public Vector(double x, double y, double z) {
         super(x, y, z);
-        if (xyz.equals(Double3.ZERO))
-            throw new IllegalArgumentException("Zero vector is illegal");
-
+        if (this.xyz.equals(Double3.ZERO))
+            throw new IllegalArgumentException("Zero vector is not allowed");
     }
 
     /**
-     * Constructor to initialize Vector based on 3 double numbers (Double3) value
-     *
-     * @param xyz number value for all 3 numbers
+     * Constructs a non-zero vector from a Double3.
+     * @throws IllegalArgumentException if the triple is zero
      */
     public Vector(Double3 xyz) {
         super(xyz);
         if (xyz.equals(Double3.ZERO))
-            throw new IllegalArgumentException("Zero vector is illegal");
+            throw new IllegalArgumentException("Zero vector is not allowed");
     }
 
-    /**
-     * cales a vector into a new vector where each coordinate is multiplied by the scale factor
-     *
-     * @param d1
-     * @return
-     */
-    public Vector scale(double d1) {
-        return new Vector(this.xyz.scale(d1));
+    /** Vector-vector addition */
+    public Vector add(Vector other) {
+        return new Vector(this.xyz.add(other.xyz));
     }
 
-    /**
-     * Sums two vectors into a new vector where each coordinate is summarized
-     *
-     * @param v1 right handle side operand for addition
-     * @return vector result of addition
-     */
-    public Vector add(Vector v1) {
-        return new Vector(this.xyz.add(v1.xyz));
+    /** Vector-vector subtraction */
+    public Vector subtract(Vector other) {
+        return new Vector(this.xyz.subtract(other.xyz));
     }
 
-    /**
-     * calculates the dot product of two vectors
-     *
-     * @param v1 right handle side operand for dot product calculation
-     * @return result of dot product
-     */
-    public double dotProduct(Vector v1) {
-        return this.xyz.d1 * v1.xyz.d1 + this.xyz.d2 * v1.xyz.d2 + this.xyz.d3 * v1.xyz.d3;
+    /** Scale this vector by a scalar */
+    public Vector scale(double scalar) {
+        return new Vector(this.xyz.scale(scalar));
     }
 
-    /**
-     * calculates the cross product of two vectors
-     *
-     * @param v1 vector right handle side operand for cross product calculation
-     * @return result of cross product
-     */
-    public Vector crossProduct(Vector v1) {
+    /** Dot product */
+    public double dotProduct(Vector other) {
+        Double3 a = this.xyz, b = other.xyz;
+        return a.d1()*b.d1() + a.d2()*b.d2() + a.d3()*b.d3();
+    }
+
+    /** Cross product */
+    public Vector crossProduct(Vector other) {
+        double x1 = xyz.d1(), y1 = xyz.d2(), z1 = xyz.d3();
+        double x2 = other.xyz.d1(), y2 = other.xyz.d2(), z2 = other.xyz.d3();
         return new Vector(
-                (this.xyz.d2 * v1.xyz.d3) - (this.xyz.d3 * v1.xyz.d2),
-                (this.xyz.d3 * v1.xyz.d1) - (this.xyz.d1 * v1.xyz.d3),
-                (this.xyz.d1 * v1.xyz.d2) - (this.xyz.d2 * v1.xyz.d1)
+                y1*z2 - z1*y2,
+                z1*x2 - x1*z2,
+                x1*y2 - y1*x2
         );
     }
 
-    /**
-     * calculates length of the vector squared
-     *
-     * @return length of vector squared
-     */
+    /** Squared length */
     public double lengthSquared() {
-        return dotProduct(this);
+        Double3 d = this.xyz;
+        return d.d1()*d.d1() + d.d2()*d.d2() + d.d3()*d.d3();
     }
 
-    /**
-     * length of the vector
-     *
-     * @return length of the vector
-     */
+    /** Length */
     public double length() {
         return Math.sqrt(lengthSquared());
     }
 
-    /**
-     * normalizes the vector
-     *
-     * @return a new normalized vector
-     */
+    /** Normalize to a unit vector */
     public Vector normalize() {
-//        return new Vector(this.xyz.reduce(this.length()));
-        return scale(1 / this.length());
+        double len = length();
+        if (isZero(len))
+            throw new ArithmeticException("Cannot normalize zero vector");
+        return scale(1.0 / len);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        return (obj instanceof Point other)
-                && this.xyz.equals(other.xyz);
+        return this == obj ||
+                (obj instanceof Vector other && this.xyz.equals(other.xyz));
     }
 
+    @Override
+    public String toString() {
+        return "Vector" + xyz;
+    }
 
     /**
-     * Return an orthogonal vector to a given vector
+     * Return an arbitrary vector orthogonal to this vector.
      *
-     * @return An orthogonal vector to the given Vector
+     * @return A normalized vector orthogonal to this vector.
      */
     public Vector getOrthogonal() {
-        return xyz.d1 == 0 ? new Vector(1, 0, 0): new Vector(-xyz.d2, xyz.d1, 0);
+        // אם הוקטור כמעט מיושר עם ציר ה-X, נבחר ציר Y כאיזשהו בסיס,
+        // אחרת נבחר ציר X. זה כדי להימנע מוקטור אפס בתוצאה של crossProduct.
+        Vector arbitrary = Math.abs(xyz.d1()) < Math.abs(xyz.d2())
+                ? new Vector(1, 0, 0)
+                : new Vector(0, 1, 0);
+        Vector orthogonal = this.crossProduct(arbitrary).normalize();
+        return orthogonal;
     }
-
-
 }

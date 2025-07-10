@@ -1,115 +1,138 @@
+// primitives/Material.java
 package primitives;
 
+/**
+ * Material encapsulates the surface optical properties used in shading:
+ * ambient (kA), diffuse (kD), specular (kS), transparency (kT),
+ * reflection (kR), and shininess exponent (Phong model).
+ */
 public class Material {
-
-    public Double3 KD = Double3.ZERO, KS = Double3.ZERO, KT = Double3.ZERO, KR = Double3.ZERO;
-    public int nShininess = 0;
-
-    /**
-     * Sets the diffuse reflection coefficient
-     * @param KD the diffuse reflection coefficient
-     * @return the current Material object
-     */
-    public Material setKD(Double3 KD) {
-        this.KD = KD;
-        return this;
-    }
-
-    /**
-     * Sets the specular reflection coefficient
-     * @param KS the specular reflection coefficient
-     * @return the current Material object
-     */
-    public Material setKS(Double3 KS) {
-        this.KS = KS;
-        return this;
-    }
+    /** Ambient reflection coefficient. */
+    private Double3 kA = Double3.ONE;
+    /** Diffuse reflection coefficient. */
+    private Double3 kD = Double3.ZERO;
+    /** Specular reflection coefficient. */
+    private Double3 kS = Double3.ZERO;
+    /** Transparency coefficient for refraction. */
+    private Double3 kT = Double3.ZERO;
+    /** Reflection coefficient for mirror-like reflection. */
+    private Double3 kR = Double3.ZERO;
+    /** Phong shininess exponent controlling specular highlight size. */
+    private int shininess = 0;
 
     /**
-     * Sets the shininess factor
-     * @param nShininess the shininess factor
-     * @return the current Material object
+     * Sets the ambient reflection coefficient (scalar).
+     * @param ka ambient coefficient value
+     * @return this Material for chaining
      */
-    public Material setnShininess(int nShininess) {
-        this.nShininess = nShininess;
-        return this;
-    }
+    public Material setKA(double ka)    { this.kA = new Double3(ka); return this; }
+    /**
+     * Sets the ambient reflection coefficient (vector).
+     * @param ka ambient coefficient vector
+     * @return this Material for chaining
+     */
+    public Material setKA(Double3 ka)   { this.kA = ka;            return this; }
 
     /**
-     * Sets the diffuse reflection coefficient using a double value
-     * @param kD the diffuse reflection coefficient
-     * @return the current Material object
+     * Sets the diffuse reflection coefficient (scalar).
+     * @param kd diffuse coefficient value
+     * @return this Material for chaining
      */
-    public Material setKD(double kD) {
-        this.KD = new Double3(kD);
-        return this;
-    }
+    public Material setKD(double kd)    { this.kD = new Double3(kd); return this; }
+    /**
+     * Sets the diffuse reflection coefficient (vector).
+     * @param kd diffuse coefficient vector
+     * @return this Material for chaining
+     */
+    public Material setKD(Double3 kd)   { this.kD = kd;            return this; }
 
     /**
-     * Sets the specular reflection coefficient using a double value
-     * @param kS the specular reflection coefficient
-     * @return the current Material object
+     * Sets the specular reflection coefficient (scalar).
+     * @param ks specular coefficient value
+     * @return this Material for chaining
      */
-    public Material setKS(double kS) {
-        this.KS = new Double3(kS);
-        return this;
-    }
+    public Material setKS(double ks)    { this.kS = new Double3(ks); return this; }
+    /**
+     * Sets the specular reflection coefficient (vector).
+     * @param ks specular coefficient vector
+     * @return this Material for chaining
+     */
+    public Material setKS(Double3 ks)   { this.kS = ks;            return this; }
 
     /**
-     * Sets the transparency coefficient
-     * @param KT the transparency coefficient
-     * @return the current Material object
+     * Sets the transparency coefficient (scalar).
+     * @param kt transparency coefficient value
+     * @return this Material for chaining
      */
-    public Material setKT(Double3 KT) {
-        this.KT = KT;
-        return this;
-    }
+    public Material setKT(double kt)    { this.kT = new Double3(kt); return this; }
+    /**
+     * Sets the transparency coefficient (vector).
+     * @param kt transparency coefficient vector
+     * @return this Material for chaining
+     */
+    public Material setKT(Double3 kt)   { this.kT = kt;            return this; }
 
     /**
-     * Sets the reflection coefficient
-     * @param KR the reflection coefficient
-     * @return the current Material object
+     * Sets the reflection coefficient (scalar).
+     * @param kr reflection coefficient value
+     * @return this Material for chaining
      */
-    public Material setKR(Double3 KR) {
-        this.KR = KR;
-        return this;
-    }
+    public Material setKR(double kr)    { this.kR = new Double3(kr); return this; }
+    /**
+     * Sets the reflection coefficient (vector).
+     * @param kr reflection coefficient vector
+     * @return this Material for chaining
+     */
+    public Material setKR(Double3 kr)   { this.kR = kr;            return this; }
 
     /**
-     * Sets the transparency coefficient using a double value
-     * @param KT the transparency coefficient
-     * @return the current Material object
+     * Sets the shininess exponent for specular highlights.
+     * @param s shininess exponent (higher values produce smaller highlights)
+     * @return this Material for chaining
      */
-    public Material setKT(double KT) {
-        this.KT = new Double3(KT);
-        return this;
-    }
+    public Material setShininess(int s) { this.shininess = s;      return this; }
 
     /**
-     * Sets the reflection coefficient using a double value
-     * @param KR the reflection coefficient
-     * @return the current Material object
+     * Retrieves the ambient coefficient vector.
+     * @return ambient coefficient (kA)
      */
-    public Material setKR(double KR) {
-        this.KR = new Double3(KR);
-        return this;
-    }
+    public Double3 getKA()     { return kA; }
+    /**
+     * Retrieves the diffuse coefficient vector.
+     * @return diffuse coefficient (kD)
+     */
+    public Double3 getKD()     { return kD; }
+    /**
+     * Retrieves the specular coefficient vector.
+     * @return specular coefficient (kS)
+     */
+    public Double3 getKS()     { return kS; }
+    /**
+     * Retrieves the transparency coefficient vector.
+     * @return transparency coefficient (kT)
+     */
+    public Double3 getKT()     { return kT; }
+    /**
+     * Retrieves the reflection coefficient vector.
+     * @return reflection coefficient (kR)
+     */
+    public Double3 getKR()     { return kR; }
+    /**
+     * Retrieves the shininess exponent.
+     * @return shininess exponent
+     */
+    public int getShininess() { return shininess; }
 
     /**
-     * Gets the diffuse reflection coefficient
-     * @return the diffuse reflection coefficient
+     * Returns a string representation of the material's properties.
+     * @return formatted Material field values
      */
-    public Double3 getKD() {
-        return KD;
+    @Override
+    public String toString() {
+        return "Material{" +
+                "kA=" + kA + ", kD=" + kD + ", kS=" + kS +
+                ", kT=" + kT + ", kR=" + kR +
+                ", shininess=" + shininess +
+                '}';
     }
-
-    /**
-     * Gets the specular reflection coefficient
-     * @return the specular reflection coefficient
-     */
-    public Double3 getKS() {
-        return KS;
-    }
-
-
 }

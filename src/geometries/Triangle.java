@@ -3,66 +3,92 @@ package geometries;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-
+import geometries.Intersectable.Intersection;
 import java.util.List;
-
-import static primitives.Util.isZero;
+import static primitives.Util.alignZero;
 
 /**
- * class Triangle is a basic class representing a triangle
- * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
- *
- * @author Ester Drey and Avigail Bash
+ * Triangle class represents a triangle in 3D space, defined as a Polygon with exactly 3 vertices.
  */
 public class Triangle extends Polygon {
 
     /**
-     * Constructs a Triangle object with three given points.
+     * Constructor for a triangle with 3 vertices.
      *
-     * @param p1 the first point of the triangle
-     * @param p2 the second point of the triangle
-     * @param p3 the third point of the triangle
+     * @param p1 first point
+     * @param p2 second point
+     * @param p3 third point
      */
     public Triangle(Point p1, Point p2, Point p3) {
         super(p1, p2, p3);
     }
 
+    @Override
+    public String toString() {
+        return "Triangle{" + vertices + "}";
+    }
 
     /**
-     * @param ray the ray to find intersections with Triangle
-     * @return the list of intersections
+     * Override the intersection calculation for triangle.
+     * The intersection is calculated with the plane and then checked if the point lies within the triangle bounds.
+     *
+     * @param ray the ray to check intersections with
+     * @return list of intersections (geometry + point + full intersection data) or null if no valid intersection
      */
     @Override
-    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
-
-        List<Point> intersections = plane.findIntersections(ray);
-        // if there are no intersections with the plane, there are no intersections with the triangle
-        if (intersections == null) {
+    protected List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        // Intersect with the underlying plane
+        List<Intersection> planeIntersections = plane.calculateIntersections(ray);
+        if (planeIntersections == null || planeIntersections.isEmpty()) {
             return null;
         }
 
-        // if the ray intersects the plane at the triangle's plane
-        Vector v1 = vertices.get(0).subtract(ray.getPoint());
-        Vector v2 = vertices.get(1).subtract(ray.getPoint());
-        Vector v3 = vertices.get(2).subtract(ray.getPoint());
+        // The intersection point on the plane
+        Intersection planeHit = planeIntersections.get(0);
+        Point p0 = ray.getPoint();
+        Vector dir = ray.getDirection();
+        Point  p  = planeHit.point;
 
-        Vector n1 = v1.crossProduct(v2).normalize();
-        Vector n2 = v2.crossProduct(v3).normalize();
-        Vector n3 = v3.crossProduct(v1).normalize();
+        // Triangle vertices
+        Point v1 = vertices.get(0);
+        Point v2 = vertices.get(1);
+        Point v3 = vertices.get(2);
 
-        double s1 = ray.getDirection().dotProduct(n1);
-        double s2 = ray.getDirection().dotProduct(n2);
-        double s3 = ray.getDirection().dotProduct(n3);
+        // Vectors from ray origin to triangle vertices
+        Vector u = v1.subtract(p0);
+        Vector v = v2.subtract(p0);
+        Vector w = v3.subtract(p0);
 
-        // if the ray is parallel to the triangle's plane
-        if (isZero(s1) || isZero(s2) || isZero(s3)) {
-            return null;
+        // Normals of sub-triangles
+        Vector n1 = u.crossProduct(v).normalize();
+        Vector n2 = v.crossProduct(w).normalize();
+        Vector n3 = w.crossProduct(u).normalize();
+
+        // Signs of dot products between ray direction and these normals
+        double s1 = alignZero(dir.dotProduct(n1));
+        double s2 = alignZero(dir.dotProduct(n2));
+        double s3 = alignZero(dir.dotProduct(n3));
+
+        boolean allPositive = s1 > 0 && s2 > 0 && s3 > 0;
+        boolean allNegative = s1 < 0 && s2 < 0 && s3 < 0;
+
+        // If point is inside the triangle (all signs same), produce a full Intersection
+        if (allPositive || allNegative) {
+            // Compute the triangle's normal at p
+            Vector normal = getNormal(p);
+            // Build an Intersection with geometry, point, material, ray, normal, no light yet
+            Intersection hit = new Intersection(
+                    this,             // the triangle geometry
+                    p,                // intersection point
+                    getMaterial(),    // the triangle's material
+                    ray,              // the incoming ray
+                    normal,           // the surface normal
+                    null              // lightSource will be set later by the tracer
+            );
+            return List.of(hit);
         }
 
-        if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
-            return List.of(new GeoPoint(this, intersections.get(0)));
-        }
-        // if the ray intersects the plane but not the triangle
+        // Outside the triangle bounds
         return null;
     }
 }

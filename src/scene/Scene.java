@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * A class representing a scene.
  *
- * @author Ester Drey Avigail Bash
+ * @author Nethanel hasid and Ori meged
  */
 public class Scene {
 

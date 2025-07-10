@@ -3,94 +3,128 @@ package geometries;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-
 import java.util.List;
-
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
+import geometries.Intersectable.Intersection;
 
 /**
- * class Plane is a class representing a plane
- * of Euclidean geometry in Cartesian 3-Dimensional coordinate system.
- *
- * @author Ester Drey and Avigail Bash
+ * The {@code Plane} class represents an infinite plane in 3D space.
+ * A plane can be defined either by three non-collinear points or by a point and a normal vector.
  */
 public class Plane extends Geometry {
-    /**
-     * normal vector to the plane
-     */
-    private Vector vector;
-    /**
-     * point in plane
-     */
-    private Point point;
+    /** A reference point on the plane. */
+    private final Point q0;
+    /** The normalized normal vector perpendicular to the plane's surface. */
+    private final Vector normal;
 
     /**
-     * Constructor to initialize Plane based on three points in plane
+     * Constructs a plane through three given points.
+     * Computes the normal as the cross product of two edge vectors.
      *
-     * @param p0 first point in plane
-     * @param p1 second point in plane
-     * @param p2 third point in plane
+     * @param p1 first point on the plane
+     * @param p2 second point on the plane
+     * @param p3 third point on the plane
      */
-    public Plane(Point p0, Point p1, Point p2) {
-        Vector v0 = p0.subtract(p1);
+    public Plane(Point p1, Point p2, Point p3) {
+        // Compute two direction vectors from p1
         Vector v1 = p2.subtract(p1);
-        Vector v2 = v0.crossProduct(v1);
-        v2.normalize();
-        this.vector = v2;
-        point = p1;
+        Vector v2 = p3.subtract(p1);
+        // Cross product yields a vector perpendicular to both v1 and v2
+        normal = v1.crossProduct(v2).normalize();
+        // Store one of the defining points
+        q0 = p1;
     }
 
     /**
-     * Constructor to initialize Plane based on a normal vector and point in plane
+     * Constructs a plane from a given point and normal vector.
+     * Normal vector is normalized internally.
      *
-     * @param v0 point in plane
-     * @param v1 normal vector to plane
+     * @param q0 reference point on the plane
+     * @param normal vector perpendicular to the plane's surface
      */
-    public Plane(Point v0, Vector v1) {
-        vector = v1.normalize();
-        point = v0;
+    public Plane(Point q0, Vector normal) {
+        this.q0 = q0;
+        // Ensure the normal is a unit vector
+        this.normal = normal.normalize();
     }
 
     /**
-     * getter to normal vector to plane normal
+     * Returns the constant normal vector of this plane (same for any point).
      *
-     * @return
-     */
-    public Vector getNormal() {
-        return vector.normalize();
-    }
-
-
-    /**
-     * Returns the normal vector to the surface of the tube at a given point.
-     *
-     * @param point the point of the plane
-     * @return The normal vector to the surface at the given point
+     * @param point ignored; plane normal is uniform
+     * @return normalized normal vector
      */
     @Override
     public Vector getNormal(Point point) {
-        return vector.normalize();
+        return normal;
     }
 
+    /**
+     * Retrieves the reference point q0 on the plane.
+     *
+     * @return reference point used in plane definition
+     */
+    public Point getQ0() {
+        return q0;
+    }
+
+    /**
+     * Retrieves the normalized normal vector of the plane.
+     *
+     * @return plane's normal vector
+     */
+    public Vector getNormal() {
+        return normal;
+    }
+
+    /**
+     * Returns a string representation of the plane, including its point and normal.
+     *
+     * @return formatted string with q0 and normal
+     */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
-        double numerator = vector.dotProduct(point.subtract(ray.getPoint()));
-        double denumerator = vector.dotProduct(ray.getDirection());
-
-        if (isZero(denumerator)) {
-            return null;
-        }
-
-        double d = numerator / denumerator;
-
-        if (d <= 0) {
-            return null;
-        }
-
-        Point p = ray.getPoint(d);
-
-        return List.of(new GeoPoint(this, p));
-
+    public String toString() {
+        return "Plane{" + q0 + ", normal=" + normal + '}';
     }
 
+    /**
+     * Calculates intersection points between a given ray and this plane.
+     * Implements the helper for the NVI pattern.
+     *
+     * @param ray the ray used for intersection test
+     * @return singleton list with one Intersection if it exists, otherwise null
+     */
+    @Override
+    protected List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        // Ray origin and direction
+        Point p0 = ray.getPoint();
+        Vector v = ray.getDirection();
+
+        // Dot product between ray direction and plane normal
+        double nv = alignZero(normal.dotProduct(v));
+        // If zero, ray is parallel to plane -> no intersections
+        if (isZero(nv)) {
+            return null;
+        }
+
+        // Vector from ray origin to plane point
+        Vector q0MinusP0;
+        try {
+            q0MinusP0 = q0.subtract(p0);
+        } catch (IllegalArgumentException e) {
+            // Ray starts exactly on the plane point -> treat as no intersection
+            return null;
+        }
+
+        // Compute t parameter for ray equation: t = (normal·(q0 - p0)) / (normal·v)
+        double t = alignZero(normal.dotProduct(q0MinusP0) / nv);
+        // If t <= 0, intersection is behind ray origin or at origin
+        if (t <= 0) {
+            return null;
+        }
+
+        // Compute the exact intersection point and return it
+        return List.of(new Intersection(this, ray.getPoint(t)));
+    }
 }

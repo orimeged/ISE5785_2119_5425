@@ -2,64 +2,84 @@ package geometries;
 
 import primitives.Ray;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * The department implements operations for several geometric bodies
- *
- * @author Ori meged and Nethanel hasid
+ * A composite of multiple Intersectable geometries.
+ * <p>
+ * Aggregates a collection of geometries and computes all intersection points
+ * between a given ray and the contained geometries.
+ * </p>
  */
-
 public class Geometries extends Intersectable {
-
-
-    private List<Intersectable> geometries = new LinkedList<>();
+    /**
+     * The internal list of geometries making up this group.
+     */
+    private final List<Intersectable> geometries;
 
     /**
-     * a constructor
+     * Creates an empty Geometries collection. Additional geometries can be added later.
      */
     public Geometries() {
+        this.geometries = new LinkedList<>();
     }
 
     /**
-     * a constructor that receives a list of geometric objects and adds them to the list
+     * Constructs a Geometries group containing the given intersectable geometries.
      *
-     * @param geometries
+     * @param geometries one or more Intersectable objects to include in this group
      */
     public Geometries(Intersectable... geometries) {
-        add(geometries);
+        this.geometries = new LinkedList<>(Arrays.asList(geometries));
     }
 
-
     /**
-     * add object to list
+     * Adds one or more geometries to this group.
      *
-     * @param geometries objects to add
+     * @param geometries one or more Intersectable objects to add
      */
     public void add(Intersectable... geometries) {
-        Collections.addAll(this.geometries, geometries);
+        this.geometries.addAll(Arrays.asList(geometries));
     }
 
-
     /**
-     * A function that receives a foundation and returns all bodies that the foundation
+     * Calculates all intersection points between the provided ray and
+     * each geometry in this collection.
      *
-     * @param ray
-     * @return
+     * @param ray the ray to test for intersections
+     * @return a list of Intersection objects, or null if there are no intersections
      */
     @Override
-    protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
-        List<GeoPoint> intersactions = null;
+    protected List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        List<Intersection> result = new LinkedList<>();
         for (Intersectable geo : geometries) {
-            List<GeoPoint> geoPoints = geo.findGeoIntersectionsHelper(ray);
-            if (geoPoints != null) {
-                if (intersactions == null)
-                    intersactions = new LinkedList<>();
-                intersactions.addAll(geoPoints);
+            List<Intersection> hits = geo.calculateIntersections(ray);
+            if (hits != null) {
+                result.addAll(hits);
             }
         }
-        return intersactions;
+        return result.isEmpty() ? null : result;
+    }
+
+    /**
+     * Checks whether this Geometries group contains any geometries.
+     *
+     * @return true if the group is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return geometries.isEmpty();
+    }
+
+    /**
+     * Returns a string representation of this group,
+     * listing all contained geometries.
+     *
+     * @return a descriptive string of this Geometries group
+     */
+    @Override
+    public String toString() {
+        return "Geometries" + geometries;
     }
 }

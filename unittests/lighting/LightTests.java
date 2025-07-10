@@ -47,7 +47,7 @@ public class LightTests {
     private static final Double3 KS3                     = new Double3(0.2, 0.4, 0.3);
 
     /** Material for some of the geometries in the tests */
-    private final Material       material                = new Material().setKD(KD3).setKS(KS3).setnShininess(SHININESS);
+    private final Material       material                = new Material().setKD(KD3).setKS(KS3).setShininess(SHININESS);
     /** Light color for tests with triangles */
     private final Color          trianglesLightColor     = new Color(800, 500, 250);
     /** Light color for tests with sphere */
@@ -83,7 +83,7 @@ public class LightTests {
 
     /** The sphere in appropriate tests */
     private final Geometry       sphere                  = new Sphere(sphereCenter, SPHERE_RADIUS)
-            .setEmission(sphereColor).setMaterial(new Material().setKD(KD).setKS(KS).setnShininess(SHININESS));
+            .setEmission(sphereColor).setMaterial(new Material().setKD(KD).setKS(KS).setShininess(SHININESS));
     /** The first triangle in appropriate tests */
     private final Geometry       triangle1               = new Triangle(vertices[0], vertices[1], vertices[2])
             .setMaterial(material);
@@ -217,6 +217,65 @@ public class LightTests {
                 .renderImage() //
                 .writeToImage(); //
     }
+
+    /** Produce a picture of a scene with ten bodies (five spheres and five triangles) lighted by multiple lights */
+    @Test
+    public void bonusSceneWithTenBodies() {
+        Scene bonusScene = new Scene("Bonus Scene")
+                .setAmbientLight(new AmbientLight(new Color(50, 50, 50), new Double3(0.1)));
+
+        // Define materials for variety
+        Material shinyMaterial = new Material().setKD(new Double3(0.4, 0.4, 0.4)).setKS(new Double3(0.6, 0.6, 0.6)).setShininess(400);
+        Material matteMaterial = new Material().setKD(new Double3(0.6, 0.5, 0.5)).setKS(new Double3(0.2, 0.2, 0.2)).setShininess(100);
+
+        // Add five spheres with varying sizes and colors
+        bonusScene.geometries.add(
+                new Sphere(new Point(0, 0, -100), 40)
+                        .setEmission(new Color(100, 20, 20)).setMaterial(shinyMaterial),
+                new Sphere(new Point(80, 50, -150), 30)
+                        .setEmission(new Color(20, 100, 20)).setMaterial(matteMaterial),
+                new Sphere(new Point(-80, -50, -80), 25)
+                        .setEmission(new Color(20, 20, 100)).setMaterial(shinyMaterial),
+                new Sphere(new Point(50, -70, -50), 20)
+                        .setEmission(new Color(100, 100, 20)).setMaterial(matteMaterial),
+                new Sphere(new Point(-50, 70, -120), 15)
+                        .setEmission(new Color(100, 20, 100)).setMaterial(shinyMaterial)
+        );
+
+        // Add five triangles forming a partial pyramid-like structure
+        Point base1 = new Point(-100, -100, -200);
+        Point base2 = new Point(100, -100, -200);
+        Point base3 = new Point(0, -100, -250);
+        Point apex1 = new Point(0, 50, -200);
+        Point apex2 = new Point(0, 0, -225);
+
+        bonusScene.geometries.add(
+                new Triangle(base1, base2, apex1).setEmission(new Color(80, 80, 80)).setMaterial(matteMaterial),
+                new Triangle(base2, base3, apex1).setEmission(new Color(80, 80, 80)).setMaterial(matteMaterial),
+                new Triangle(base3, base1, apex1).setEmission(new Color(80, 80, 80)).setMaterial(matteMaterial),
+                new Triangle(base1, base2, apex2).setEmission(new Color(60, 60, 60)).setMaterial(shinyMaterial),
+                new Triangle(base2, base3, apex2).setEmission(new Color(60, 60, 60)).setMaterial(shinyMaterial)
+        );
+
+        // Add multiple lights for realism
+        bonusScene.lights.add(
+                new DirectionalLight(new Color(200, 200, 200), new Vector(1, -1, -1)) // Soft white directional light
+                // Warm point light
+                // Cool spotlight
+        );
+
+        // Configure camera
+        Camera.Builder bonusCamera = Camera.getBuilder()
+                .setRayTracer(new SimpleRayTracer(bonusScene))
+                .setLocation(new Point(0, 0, 1000))
+                .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+                .setVpSize(200, 200).setVpDistance(1000)
+                .setImageWriter(new ImageWriter("bonusSceneWithTenBodies", 500, 500));
+
+        // Render and write image
+        bonusCamera.build().renderImage().writeToImage();
+    }
+
 
 }
 

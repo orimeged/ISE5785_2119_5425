@@ -113,6 +113,16 @@ public class PointLight extends Light implements LightSource {
         this.KQ = KQ;
         return this;
     }
+    /**
+     * No-op stub for compatibility: narrow-beam parameter is ignored for PointLight.
+     *
+     * @param ignored beam width parameter (unused)
+     * @return this PointLight for chaining
+     */
+    public PointLight setNarrowBeam(int ignored) {
+        // Compatibility stub; no effect
+        return this;
+    }
 
 
     /**

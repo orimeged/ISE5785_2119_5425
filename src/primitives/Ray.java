@@ -1,145 +1,130 @@
 package primitives;
 
 import geometries.Intersectable.GeoPoint;
+import geometries.Intersectable.Intersection;
+import renderer.SimpleRayTracer;
 
 import java.util.List;
 
-import static primitives.Util.isZero;
-
 /**
- * Class Ray is the basic class representing a ray of Euclidean geometry in Cartesian
- * 3-Dimensional coordinate system.
- *
- * @author Ester Drey and Avigail Bash
+ * The {@code Ray} class represents a ray in 3D space, defined by
+ * a starting point {@link #p0} and a normalized direction {@link #dir}.
+ * Provides utilities for computing points along the ray and
+ * finding closest intersections or geo-points.
  */
 public class Ray {
-    public static final double DELTA = 0.00001;
-    /**
-     * starting point of the ray
-     */
-    private final Point point;
-    /**
-     * direction vector of the ray
-     */
-    private final Vector direction;
-
+    /** The ray’s origin point. */
+    private final Point p0;
+    /** The ray’s normalized direction vector. */
+    private final Vector dir;
 
     /**
-     * Constructor to initialize Ray based on point and a vector
-     *
-     * @param p1 starting point of the ray
-     * @param v1 direction vector of the ray
+     * Constructs a ray from an origin and direction.
+     * @param p0  origin point
+     * @param dir direction vector (will be normalized)
      */
-    public Ray(Point p1, Vector v1) {
-        point = p1;
-        direction = v1.normalize();
-        p1 = point;
-    }
-
-
-    /**
-     * New constructor for ray that also receives a normal vector. It then moves the
-     * ray's origin a short distance in the normal's direction.
-     *
-     * @param p0     the original point
-     * @param dir    the direction vector
-     * @param normal the normal along which to move the origin point
-     */
-    public Ray(Point p0, Vector dir, Vector normal) {
-        double res = dir.dotProduct(normal);
-        this.point = isZero(res) ? p0 : res > 0 ? p0.add(normal.scale(0.00001)) : p0.add(normal.scale(-0.00001));
-        this.direction = dir.normalize();
+    public Ray(Point p0, Vector dir) {
+        this.p0  = p0;
+        this.dir = dir.normalize();
     }
 
     /**
-     * Override equals method
-     *
-     * @param obj
-     * @return object
+     * Constructs a ray whose origin is shifted by ±DELTA along the normal
+     * to avoid self-intersection artifacts.
+     * @param head   the hit-point
+     * @param dir    the (already normalized) direction
+     * @param normal the surface normal at the hit point
      */
+    public Ray(Point head, Vector dir, Vector normal) {
+        double sign = dir.dotProduct(normal) < 0 ? -1 : 1;
+        this.p0  = head.add(normal.scale(sign * SimpleRayTracer.DELTA));
+        this.dir = dir.normalize();
+    }
+
+    public Point getPoint()  { return p0; }
+    public Vector getDirection() { return dir; }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        return (obj instanceof Ray other)
-                && this.point.equals(other.point)
-                && this.direction.equals(other.direction);
+        if (!(obj instanceof Ray other)) return false;
+        return p0.equals(other.p0) && dir.equals(other.dir);
+    }
+
+    @Override
+    public String toString() {
+        return "Ray{" + p0 + ", " + dir + "}";
     }
 
     /**
-     * get point of the ray
-     *
-     * @return the point
+     * Computes the point along this ray at distance {@code d} from {@link #p0}.
+     * @param d distance from the origin
+     * @return the computed {@link Point} on the ray
      */
-    public Point getPoint() {
-        return point;
+    public Point getPoint(double d) {
+        if (Util.isZero(d)) {
+            return p0;
+        }
+        try {
+            return p0.add(dir.scale(d));
+        } catch (IllegalArgumentException e) {
+            // scaling created a zero vector -> return origin
+            return p0;
+        }
     }
 
     /**
-     * return the direction
-     *
-     * @return vector
+     * Finds the closest {@link GeoPoint} in the given list to this ray’s origin.
      */
-    public Vector getDirection() {
-        return direction;
-    }
-
-    /**
-     * getter
-     *
-     * @param t
-     * @return point
-     */
-    public Point getPoint(double t) {
-        if (t == 0) return point;
-        return point.add(direction.scale(t));
-    }
-
-    /**
-     * find the closest point to ray's head
-     *
-     * @param list
-     * @return the closet point
-     */
-    public Point findClosestPoint(List<Point> list) {
-        if (list == null)
-            return null;
-
-        double distance = Double.POSITIVE_INFINITY;
-        Point closest = null;
-        for (Point p : list)    //find the closest point
-            if (p.distance(point) < distance) {
-                distance = p.distance(point);
-                closest = p;
+    public GeoPoint findClosestGeoPoint(List<GeoPoint> geoPoints) {
+        if (geoPoints == null || geoPoints.isEmpty()) return null;
+        GeoPoint closest   = null;
+        double   minDist   = Double.POSITIVE_INFINITY;
+        for (GeoPoint gp : geoPoints) {
+            double d = p0.distance(gp.point);
+            if (d < minDist) {
+                minDist = d;
+                closest = gp;
             }
+        }
         return closest;
     }
 
-
     /**
-     * Finds the closest GeoPoint to the start of the ray from a collection of
-     * GeoPoints.
-     *
-     * @param intersections The collection of GeoPoints.
-     * @return The closest GeoPoint to the start of the ray.
+     * Finds the closest {@link Intersection} in the given list to this ray’s origin.
      */
-    public GeoPoint findClosestGeoPoint(List<GeoPoint> intersections) {
-        // Initialize variables to store the closest GeoPoint and its distance
-        GeoPoint closestGeoPoint = null;
-        double closestDistance = Double.POSITIVE_INFINITY;
-
-        // Iterate through the list of GeoPoints
-        for (GeoPoint geoPoint : intersections) {
-            // Calculate the distance between the origin of the ray and the current GeoPoint
-            double distance = point.distance(geoPoint.point);
-
-            // Check if the current GeoPoint is closer than the previous closest GeoPoint
-            if (distance < closestDistance) {
-                closestGeoPoint = geoPoint;
-                closestDistance = distance;
+    public Intersection findClosestIntersection(List<Intersection> intersections) {
+        if (intersections == null || intersections.isEmpty()) return null;
+        Intersection closest = null;
+        double       minDist = Double.POSITIVE_INFINITY;
+        for (Intersection inter : intersections) {
+            double d = p0.distance(inter.point);
+            if (d < minDist) {
+                minDist = d;
+                closest = inter;
             }
         }
+        return closest;
+    }
 
-        // Return the closest GeoPoint
-        return closestGeoPoint;
+    /**
+     * Finds the closest {@link Point} in the given list to this ray’s origin.
+     * @param points list of points
+     * @return the nearest point, or {@code null} if none
+     */
+    public Point findClosestPoint(List<Point> points) {
+        if (points == null || points.isEmpty()) {
+            return null;
+        }
+        Point closest      = null;
+        double minDistance = Double.POSITIVE_INFINITY;
+        for (Point p : points) {
+            double dist = p0.distance(p);
+            if (dist < minDistance) {
+                minDistance = dist;
+                closest     = p;
+            }
+        }
+        return closest;
     }
 }
